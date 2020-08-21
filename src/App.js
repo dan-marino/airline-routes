@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import "./App.css";
-const { routes, airlines, airports } = require("./data.js").default;
+const { routes, airlines, airports, getAirlinesById, getAirportByCode } = require("./data.js").default;
 
 const routesDisplay = routes.map((route) => {
   return (
     <tr key={`${route.airline}${route.src}${route.dest}`}>
-      <td>{route.airline}</td>
-      <td>{route.src}</td>
-      <td>{route.dest}</td>
+      <td>{getAirlinesById(route.airline).name}</td>
+      <td>{getAirportByCode(route.src).name}</td>
+      <td>{getAirportByCode(route.dest).name}</td>
     </tr>
   );
 });
