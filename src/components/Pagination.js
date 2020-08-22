@@ -23,28 +23,30 @@ const Pagination = ({
   const lastPage = currentPage === totalPages;
 
   return (
-    <nav className="d-flex justify-content-center" aria-label="...">
-      <h5>
+    <div>
+      <h5 className="text-center">
         Showing {startingEntry} - {endingEntry} of {totalRoutes} routes.
       </h5>
-      <ul className="pagination">
-        <li className={`page-item ${firstPage ? "disabled" : ""}`}>
-          <a
-            className="page-link"
-            onClick={onBackClick}
-            tabIndex="-1"
-            aria-disabled={firstPage}
-          >
-            Previous
-          </a>
-        </li>
-        <li className={`page-item ${lastPage ? "disabled" : ""}`}>
-          <a className="page-link" onClick={onNextClick} href="">
-            Next
-          </a>
-        </li>
-      </ul>
-    </nav>
+      <nav className="d-flex justify-content-center" aria-label="...">
+        <ul className="pagination">
+          <li className={`page-item ${firstPage ? "disabled" : ""}`}>
+            <a
+              className="page-link"
+              onClick={onBackClick}
+              tabIndex="-1"
+              aria-disabled={firstPage}
+            >
+              Previous
+            </a>
+          </li>
+          <li className={`page-item ${lastPage ? "disabled" : ""}`}>
+            <a className="page-link" onClick={onNextClick} href="">
+              Next
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
   );
 };
 

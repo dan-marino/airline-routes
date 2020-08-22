@@ -1,6 +1,7 @@
 import React from "react";
 import Table from "./components/Table";
 import Pagination from "./components/Pagination";
+import FilterMenu from "./components/FilterMenu";
 import "./App.css";
 
 const ROUTES_PER_PAGE = 25;
@@ -16,17 +17,30 @@ const {
 
 class App extends React.Component {
   state = {
+    filteredRoutes: routes,
     routesDisplayed: routes.slice(STARTING_PREVIOUS_PAGE, ROUTES_PER_PAGE),
     previousPage: STARTING_PREVIOUS_PAGE,
     currentPage: STARTING_CURRENT_PAGE,
     totalPages: Math.ceil(routes.length / ROUTES_PER_PAGE),
-    airlineSeelcted: null,
-    airportSelected: null,
+    airlineSelected: "",
+    airportSelected: "",
   };
 
-  filteredAirlines = (selected) => {
-    if (!selected) return routes;
-    return routes.filter((route) => route.airline === selected.id);
+  selectedAirlineChanged = (airline) => {
+    const filteredByAirlines = this.filteredAirlines(airline.id);
+    this.setState({
+      airlineSelected: airline.id,
+      filteredRoutes: filteredByAirlines,
+      routesDisplayed: filteredByAirlines.slice(
+        STARTING_PREVIOUS_PAGE,
+        ROUTES_PER_PAGE
+      ),
+      totalPages: Math.ceil(filteredByAirlines.length / ROUTES_PER_PAGE)
+    });
+  };
+
+  filteredAirlines = (id) => {
+    return !id ? routes : routes.filter((route) => route.airline === +id);
   };
 
   filteredAirports = (selected) => {
@@ -36,11 +50,11 @@ class App extends React.Component {
     });
   };
 
-  updatePage = (routes) => {
-    const startingRoute = this.state.previousPage * ROUTES_PER_PAGE;
-    const endingRoute = this.state.currentPage * ROUTES_PER_PAGE;
-    return routes.slice(startingRoute, endingRoute);
-  };
+  // updatePage = (routes, currentPage) => {
+  //   const startingRoute = this.state.previousPage * ROUTES_PER_PAGE;
+  //   const endingRoute = this.state.currentPage * ROUTES_PER_PAGE;
+  //   return routes.slice(startingRoute, endingRoute);
+  // };
 
   pageChanged = (nextPage) => {
     const currentPage = this.state.currentPage;
@@ -48,7 +62,7 @@ class App extends React.Component {
       this.setState({
         currentPage: currentPage + 1,
         previousPage: currentPage,
-        routesDisplayed: routes.slice(
+        routesDisplayed: this.state.filteredRoutes.slice(
           currentPage * ROUTES_PER_PAGE,
           (currentPage + 1) * ROUTES_PER_PAGE
         ),
@@ -96,6 +110,14 @@ class App extends React.Component {
           <h1 className="title">Airline Routes</h1>
         </header>
         <section>
+          <FilterMenu
+            choices={airlines}
+            currentSelection={this.state.airlineSelected}
+            onSelected={this.selectedAirlineChanged}
+            leadingChoice={"All Airplanes"}
+          ></FilterMenu>
+        </section>
+        <section>
           <Table
             className="routes-table"
             headers={this.formattedHeaders}
@@ -111,7 +133,7 @@ class App extends React.Component {
               onPageChange={this.pageChanged}
               currentPage={this.state.currentPage}
               totalPages={this.state.totalPages}
-              totalRoutes={routes.length}
+              totalRoutes={this.state.filteredRoutes.length}
               routesPerPage={ROUTES_PER_PAGE}
             ></Pagination>
           }
