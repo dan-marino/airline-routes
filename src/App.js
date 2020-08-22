@@ -31,11 +31,13 @@ class App extends React.Component {
     this.setState({
       airlineSelected: airline.id,
       filteredRoutes: filteredByAirlines,
+      currentPage: STARTING_CURRENT_PAGE,
+      previousPage: STARTING_PREVIOUS_PAGE,
+      totalPages: Math.ceil(filteredByAirlines.length / ROUTES_PER_PAGE),
       routesDisplayed: filteredByAirlines.slice(
         STARTING_PREVIOUS_PAGE,
         ROUTES_PER_PAGE
       ),
-      totalPages: Math.ceil(filteredByAirlines.length / ROUTES_PER_PAGE)
     });
   };
 
@@ -71,7 +73,7 @@ class App extends React.Component {
       this.setState({
         currentPage: currentPage - 1,
         previousPage: currentPage - 1,
-        routesDisplayed: routes.slice(
+        routesDisplayed: this.state.filteredRoutes.slice(
           (currentPage - 2) * ROUTES_PER_PAGE,
           (currentPage - 1) * ROUTES_PER_PAGE
         ),
