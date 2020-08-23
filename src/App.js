@@ -26,31 +26,49 @@ class App extends React.Component {
     airportSelected: "",
   };
 
+  filterRoutes = (airline, airport) => {
+    if (![airline, airport].some((selection) => selection)) return routes;
+    return routes.filter(
+      (route) => { return (
+        (!airline || route.airline === +airline) &&
+        (!airport || [route.src, route.dest].includes(airport))
+      )}
+    );
+  };
+
   selectedAirlineChanged = (airline) => {
-    const filteredByAirlines = this.filteredAirlines(airline.id);
+    const filteredByRoutes = this.filterRoutes(
+      airline.id,
+      this.state.airportSelected
+    );
+    // const filteredByAirlines = this.filteredAirlines(airline.id);
     this.setState({
       airlineSelected: airline.id,
-      filteredRoutes: filteredByAirlines,
+      filteredRoutes: filteredByRoutes,
       currentPage: STARTING_CURRENT_PAGE,
       previousPage: STARTING_PREVIOUS_PAGE,
-      totalPages: Math.ceil(filteredByAirlines.length / ROUTES_PER_PAGE),
-      routesDisplayed: filteredByAirlines.slice(
+      totalPages: Math.ceil(filteredByRoutes.length / ROUTES_PER_PAGE),
+      routesDisplayed: filteredByRoutes.slice(
         STARTING_PREVIOUS_PAGE,
         ROUTES_PER_PAGE
       ),
     });
   };
 
-  selectedAirportChanged = (airline) => {
-    const filteredByAirports = this.filteredAirports(airline.id);
+  selectedAirportChanged = (airport) => {
+    // const filteredByAirports = this.filterRoutes(airport, id, )
+    const filteredByRoutes = this.filterRoutes(
+      this.state.airlineSelected,
+      airport.id
+    );
     // console.log(filteredByAirports);
     this.setState({
-      airportSelected: airline.id,
-      filteredRoutes: filteredByAirports,
+      airportSelected: airport.id,
+      filteredRoutes: filteredByRoutes,
       currentPage: STARTING_CURRENT_PAGE,
       previousPage: STARTING_PREVIOUS_PAGE,
-      totalPages: Math.ceil(filteredByAirports.length / ROUTES_PER_PAGE),
-      routesDisplayed: filteredByAirports.slice(
+      totalPages: Math.ceil(filteredByRoutes.length / ROUTES_PER_PAGE),
+      routesDisplayed: filteredByRoutes.slice(
         STARTING_PREVIOUS_PAGE,
         ROUTES_PER_PAGE
       ),
@@ -58,11 +76,10 @@ class App extends React.Component {
   };
 
   filteredAirlines = (id) => {
-    return !id ? routes : routes.filter((route) => route.airline === +id);
+    routes.filter((route) => route.airline === +id);
   };
 
   filteredAirports = (id) => {
-    if (!id) return routes;
     return routes.filter((route) => {
       return route.src === id || route.dest === id;
     });
@@ -128,11 +145,14 @@ class App extends React.Component {
         <header className="header">
           <h1 className="title">Airline Routes</h1>
         </header>
-        <br/>
-        <section className="d-flex justify-content-around">
+        <br />
+        <section className="d-flex justify-content-center">
           <FilterMenu
             choices={airlines}
-            currentSelections={[this.state.airportSelected, this.state.airlineSelected]}
+            currentSelections={[
+              this.state.airportSelected,
+              this.state.airlineSelected,
+            ]}
             filteredRoutes={this.state.filteredRoutes}
             onSelected={this.selectedAirlineChanged}
             leadingChoice="All Airplanes"
@@ -140,14 +160,20 @@ class App extends React.Component {
           ></FilterMenu>
           <FilterMenu
             choices={airports}
-            currentSelections={[this.state.airportSelected, this.state.airlineSelected]}
+            currentSelections={[
+              this.state.airportSelected,
+              this.state.airlineSelected,
+            ]}
             filteredRoutes={this.state.filteredRoutes}
             onSelected={this.selectedAirportChanged}
             leadingChoice="All Airports"
             labelFor="flying in or out of"
           ></FilterMenu>
+          <button type="button" className="btn btn-primary btn-sm">
+            Show All Results
+          </button>
         </section>
-        <br/>
+        <br />
         <section>
           <Table
             className="routes-table"
