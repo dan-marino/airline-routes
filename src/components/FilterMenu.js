@@ -1,16 +1,35 @@
 import React from "react";
 
-const FilterMenu = ({ choices, currentSelection, onSelected, leadingChoice }) => {
-  const adjustFilter = function(e) {
-    const selected = e.target.selectedOptions[0]
-    onSelected({ id: selected.id, name: selected.getAttribute('name') })
-  }
+const FilterMenu = ({
+  choices,
+  currentSelections,
+  onSelected,
+  leadingChoice,
+  labelFor,
+  filteredRoutes,
+}) => {
+  const { airline, src, dest } = filteredRoutes;
+
+  const adjustFilter = function (e) {
+    const selected = e.target.selectedOptions[0];
+    onSelected({ id: selected.id, name: selected.getAttribute("name") });
+  };
+
+  const disableSelection = (key, choice) => {
+    const statement = !(
+      !currentSelections.some((selection) => selection) ||
+      filteredRoutes.find((routes) => Object.values(routes).includes(key))
+    );
+    // console.log(statement);
+    return statement;
+  };
   const selections = choices.map((choice) => {
+    const key = choice.id || choice.code;
     return (
       <option
-        key={choice.id}
-        id={choice.id}
-        disabled={!(!+currentSelection || +currentSelection === choice.id)}
+        key={key}
+        id={key}
+        disabled={disableSelection(key, choice)}
         name={choice.name}
       >
         {choice.name}
@@ -19,10 +38,13 @@ const FilterMenu = ({ choices, currentSelection, onSelected, leadingChoice }) =>
   });
 
   return (
-    <select onChange={adjustFilter} className="form-control form-control-lg container">
-      <option>{leadingChoice}</option>
-      {selections}
-    </select>
+    <div>
+      <label>{labelFor}: </label>
+      <select onChange={adjustFilter}>
+        <option>{leadingChoice}</option>
+        {selections}
+      </select>
+    </div>
   );
 };
 

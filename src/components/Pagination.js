@@ -17,10 +17,11 @@ const Pagination = ({
     onPageChange(true);
   };
 
-  const startingEntry = (currentPage - 1) * routesPerPage + 1;
-  const endingEntry = (lastPage) ? totalRoutes : currentPage * routesPerPage;
   const firstPage = currentPage === 1;
   const lastPage = currentPage === totalPages;
+  const startingEntry = (currentPage - 1) * routesPerPage + 1;
+  const endingEntry = (lastPage) ? totalRoutes : currentPage * routesPerPage;
+
 
   return (
     <div>

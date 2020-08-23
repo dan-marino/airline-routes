@@ -41,14 +41,30 @@ class App extends React.Component {
     });
   };
 
+  selectedAirportChanged = (airline) => {
+    const filteredByAirports = this.filteredAirports(airline.id);
+    // console.log(filteredByAirports);
+    this.setState({
+      airportSelected: airline.id,
+      filteredRoutes: filteredByAirports,
+      currentPage: STARTING_CURRENT_PAGE,
+      previousPage: STARTING_PREVIOUS_PAGE,
+      totalPages: Math.ceil(filteredByAirports.length / ROUTES_PER_PAGE),
+      routesDisplayed: filteredByAirports.slice(
+        STARTING_PREVIOUS_PAGE,
+        ROUTES_PER_PAGE
+      ),
+    });
+  };
+
   filteredAirlines = (id) => {
     return !id ? routes : routes.filter((route) => route.airline === +id);
   };
 
-  filteredAirports = (selected) => {
-    if (!selected) return routes;
+  filteredAirports = (id) => {
+    if (!id) return routes;
     return routes.filter((route) => {
-      return route.src === selected.code || route.dest === selected.code;
+      return route.src === id || route.dest === id;
     });
   };
 
@@ -106,19 +122,32 @@ class App extends React.Component {
   ));
 
   render = () => {
+    // console.log(this.state.filteredRoutes);
     return (
       <div className="app">
         <header className="header">
           <h1 className="title">Airline Routes</h1>
         </header>
-        <section>
+        <br/>
+        <section className="d-flex justify-content-around">
           <FilterMenu
             choices={airlines}
-            currentSelection={this.state.airlineSelected}
+            currentSelections={[this.state.airportSelected, this.state.airlineSelected]}
+            filteredRoutes={this.state.filteredRoutes}
             onSelected={this.selectedAirlineChanged}
-            leadingChoice={"All Airplanes"}
+            leadingChoice="All Airplanes"
+            labelFor="Show routes on"
+          ></FilterMenu>
+          <FilterMenu
+            choices={airports}
+            currentSelections={[this.state.airportSelected, this.state.airlineSelected]}
+            filteredRoutes={this.state.filteredRoutes}
+            onSelected={this.selectedAirportChanged}
+            leadingChoice="All Airports"
+            labelFor="flying in or out of"
           ></FilterMenu>
         </section>
+        <br/>
         <section>
           <Table
             className="routes-table"
