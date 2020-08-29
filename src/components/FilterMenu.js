@@ -11,6 +11,8 @@ const FilterMenu = ({
   const { airline, src, dest } = filteredRoutes;
 
   const adjustFilter = function (e) {
+    
+
     const selected = e.target.selectedOptions[0];
     onSelected({ id: selected.id, name: selected.getAttribute("name") });
   };
@@ -20,7 +22,6 @@ const FilterMenu = ({
       !currentSelections.some((selection) => selection) ||
       filteredRoutes.find((routes) => Object.values(routes).includes(key))
     );
-    // console.log(statement);
     return statement;
   };
   const selections = choices.map((choice) => {

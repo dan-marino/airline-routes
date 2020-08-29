@@ -41,7 +41,6 @@ class App extends React.Component {
       airline.id,
       this.state.airportSelected
     );
-    // const filteredByAirlines = this.filteredAirlines(airline.id);
     this.setState({
       airlineSelected: airline.id,
       filteredRoutes: filteredByRoutes,
@@ -56,12 +55,10 @@ class App extends React.Component {
   };
 
   selectedAirportChanged = (airport) => {
-    // const filteredByAirports = this.filterRoutes(airport, id, )
     const filteredByRoutes = this.filterRoutes(
       this.state.airlineSelected,
       airport.id
     );
-    // console.log(filteredByAirports);
     this.setState({
       airportSelected: airport.id,
       filteredRoutes: filteredByRoutes,
@@ -84,12 +81,6 @@ class App extends React.Component {
       return route.src === id || route.dest === id;
     });
   };
-
-  // updatePage = (routes, currentPage) => {
-  //   const startingRoute = this.state.previousPage * ROUTES_PER_PAGE;
-  //   const endingRoute = this.state.currentPage * ROUTES_PER_PAGE;
-  //   return routes.slice(startingRoute, endingRoute);
-  // };
 
   pageChanged = (nextPage) => {
     const currentPage = this.state.currentPage;
@@ -114,7 +105,23 @@ class App extends React.Component {
     }
   };
 
-  formatValue = () => {};
+  resetFilters = () => {
+    const selects = [...document.getElementsByTagName("select")]
+    selects.forEach(select => {})
+
+    this.setState({
+      airportSelected: "",
+      airlineSelected: "",
+      filteredRoutes: routes,
+      currentPage: STARTING_CURRENT_PAGE,
+      previousPage: STARTING_PREVIOUS_PAGE,
+      totalPages: Math.ceil(routes.length / ROUTES_PER_PAGE),
+      routesDisplayed: routes.slice(
+        STARTING_PREVIOUS_PAGE,
+        ROUTES_PER_PAGE
+      ),
+    });
+  }
 
   formatColumns = (routes) => {
     return routes.map((route) => {
@@ -169,7 +176,7 @@ class App extends React.Component {
             leadingChoice="All Airports"
             labelFor="flying in or out of"
           ></FilterMenu>
-          <button type="button" className="btn btn-primary btn-sm">
+          <button type="button" onClick={this.resetFilters} className="btn btn-primary btn-sm">
             Show All Results
           </button>
         </section>
